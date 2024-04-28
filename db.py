@@ -18,6 +18,7 @@ class Machine(db.Model):
     brbs = db.Column(db.Boolean, nullable = False)
     itemtype = db.Column(db.String, nullable = False)
     items = db.relationship("Item", secondary = association_table, back_populates = "machines")
+    location_id = db.Column(db.Integer, db.ForeignKey("location.id"), nullable = False)
 
     def __init__(self, **kwargs):
         """initialize a Course"""
@@ -25,6 +26,7 @@ class Machine(db.Model):
         self.status = kwargs.get("status")
         self.brbs = kwargs.get("brbs")
         self.itemtype = kwargs.get("itemtype")
+        self.location_id = kwargs.get("location_id")
 
     def serialize(self):  
         """serialize a Course"""  
@@ -35,6 +37,7 @@ class Machine(db.Model):
             "brbs": self.brbs,
             "itemtype": self.itemtype,
             "items": [i.simple_serialize() for i in self.items],
+            "location": Location.query.filter_by(id=self.location_id).first().simple_serialize()
         }
 
     def simple_serialize(self):  
@@ -72,4 +75,30 @@ class Item(db.Model):
         return {        
             "id": self.id,
             "name": self.name
+        }
+
+class Location(db.Model):
+    """Location Model"""
+    __tablename__ = "location"
+    id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    location = db.Column(db.String, nullable = False)
+    machines = db.relationship("Location", cascade = "delete")
+
+    def __init__(self, **kwargs):
+        """Initialize a location"""
+        self.location = kwargs.get("location")
+
+    def serialize(self):
+        """Serialize a location"""
+        return {
+            "id": self.id,
+            "location": self.location,
+            "machines": [m.simple_serialize() for m in self.machines]
+        }
+    
+    def simple_serialize(self):
+        """Serialize a location without the machines field"""
+        return {
+            "id": self.id,
+            "location": self.location
         }
