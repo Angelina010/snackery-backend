@@ -25,8 +25,7 @@ class Machine(db.Model):
         self.coordinate = kwargs.get("coordinate")
         self.status = kwargs.get("status")
         self.brbs = kwargs.get("brbs")
-        self.itemtype = kwargs.get("itemtype")
-        self.location_id = kwargs.get("location_id")
+        self.itemtype = kwargs.get("itemtype") #location is a foreign key so it shouldn't be initialized here, so I deleted it
 
     def serialize(self):  
         """serialize a Course"""  
