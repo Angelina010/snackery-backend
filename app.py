@@ -1,4 +1,4 @@
-from db import db, Machine, Item
+from db import db, Machine, Item, Location
 from flask import Flask, request
 import json
 
@@ -21,6 +21,26 @@ def failure_response(message, code=404):
 
 
 #machines
+@app.route("/api/machines/")
+def get_machines():
+    """gets all machines"""
+    machines = [m.serialize() for m in Machine.query.all()]
+    return json.dumps({"machines": machines}), 200
+
+@app.route("/api/machines/<int:id>")
+def get_machine(id):
+    """get machine by id"""
+    machine = Machine.query.filter_by(id = id).first()
+    if machine is None:
+        return failure_response("Machine not found.")
+    return json.dumps(machine.serialize()), 200
+
+@app.route("/api/machines/brbs")
+def get_brb_machines():
+    """gets all machines that accept BRBs"""
+    machines = [m.serialize() for m in Machine.query.all() if m.brbs]
+    return json.dumps({"machines": machines}), 200
+
 @app.route("/api/machines/", methods = ["POST"])
 def create_machine():
     """create a machine based on info given by user"""
@@ -54,6 +74,15 @@ def update_status(id):
     db.session.commit()
     return json.dumps(machine.serialize()), 200
 
+#locations
+@app.route("/api/locations/<int:id>")
+def get_machines_by_location(id):
+    """get all machines at the location with the given id"""
+    location = Location.query.filter_by(id = id).first()
+    if location is None:
+        return failure_response("Location not found.")
+    machines = [m.serialize() for m in location.machines]
+    return json.dumps({"machines": machines}), 200
 
 #items
 @app.route("/api/items/", methods = ["POST"])
