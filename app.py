@@ -19,6 +19,10 @@ with app.app_context():
 def failure_response(message, code=404):
     return json.dumps({'error': message}), code
 
+@app.route("/")
+def base():
+    """base endpoint"""
+    return "Welcome to Snackery!"
 
 #machines
 @app.route("/api/machines/")
