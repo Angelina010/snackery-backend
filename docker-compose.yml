@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  demo:
+    image: drm293/vending-machine
+    ports:
+      - "80:8000"
