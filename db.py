@@ -14,7 +14,7 @@ class Machine(db.Model):
     __tablename__ = "machine"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     coordinate = db.Column(db.String, nullable = False)
-    status = db.Column(db.String, nullable = False)
+    status = db.Column(db.Boolean, nullable = False)
     brbs = db.Column(db.Boolean, nullable = False)
     itemtype = db.Column(db.String, nullable = False)
     items = db.relationship("Item", secondary = association_table, back_populates = "machines")
@@ -25,7 +25,8 @@ class Machine(db.Model):
         self.coordinate = kwargs.get("coordinate")
         self.status = kwargs.get("status")
         self.brbs = kwargs.get("brbs")
-        self.itemtype = kwargs.get("itemtype") #location is a foreign key so it shouldn't be initialized here, so I deleted it
+        self.itemtype = kwargs.get("itemtype")
+        self.location_id = kwargs.get("location_id")
 
     def serialize(self):  
         """serialize a Course"""  
@@ -81,7 +82,7 @@ class Location(db.Model):
     __tablename__ = "location"
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     location = db.Column(db.String, nullable = False)
-    machines = db.relationship("Location", cascade = "delete")
+    machines = db.relationship("Machine", cascade = "delete")
 
     def __init__(self, **kwargs):
         """Initialize a location"""
