@@ -1,1 +1,1 @@
-# vending-machine-cornell
+# snackery-backend
